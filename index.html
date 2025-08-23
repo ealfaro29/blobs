@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Blob Studio — SVG Organic Shape Generator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="panel">
+    <h1>Blob Studio</h1>
+    <div class="sub">Smooth, exportable SVG blobs.</div>
+  </header>
+
+  <aside class="panel controls" id="controls">
+    <div class="control">
+      <div class="row"><label for="mode">Mode</label>
+        <select id="mode">
+          <option value="basic" selected>Basic</option>
+          <option value="advanced">Advanced</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Basic Mode -->
+    <div class="control" id="basicControls">
+      <button class="btn" id="basicGenerate">Generate random blob</button>
+      <div class="control actions">
+        <button class="btn download-svg">Download SVG</button>
+      </div>
+    </div>
+
+    <!-- Advanced Mode -->
+    <div id="advancedControls">
+      <div class="control">
+        <button class="btn" id="randomize">Shuffle Shape</button>
+      </div>
+
+      <div class="split">
+        <div class="control">
+          <div class="row"><label for="points">Points</label><input class="num-input" id="points_num" type="number" min="3" max="24" step="1" value="8"></div>
+          <input id="points" type="range" min="3" max="24" value="8" step="1">
+        </div>
+        <div class="control">
+          <div class="row"><label for="smooth">Smoothness</label><input class="num-input" id="smooth_num" type="number" min="0.2" max="1.8" step="0.05" value="1.0"></div>
+          <input id="smooth" type="range" min="0.2" max="1.8" value="1.0" step="0.05">
+        </div>
+      </div>
+      
+      <div class="split">
+        <div class="control">
+          <div class="row"><label for="variance">Variance</label><input class="num-input" id="variance_num" type="number" min="0" max="0.95" step="0.01" value="0.35"></div>
+          <input id="variance" type="range" min="0" max="0.95" value="0.35" step="0.01">
+        </div>
+        <div class="control">
+          <div class="row"><label for="jitter">Jitter</label><input class="num-input" id="jitter_num" type="number" min="0" max="1" step="0.01" value="0.15"></div>
+          <input id="jitter" type="range" min="0" max="1" value="0.15" step="0.01">
+        </div>
+      </div>
+      
+      <div class="control actions">
+        <button class="btn copy-path">Copy path</button>
+        <button class="btn copy-svg">Copy SVG</button>
+        <button class="btn download-svg">Download SVG</button>
+      </div>
+
+      <div class="note">Tip: Share the URL to share your blob shape!</div>
+    </div>
+  </aside>
+
+  <main class="grid panel">
+    <div class="stage">
+      <svg id="svg" viewBox="-320 -320 640 640" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Blob preview">
+        <path id="blob" d=""/>
+      </svg>
+    </div>
+  </main>
+
+  <!-- Notification "Toast" Container -->
+  <div id="toast" class="toast"></div>
+  
+  <!-- Accessibility Live Region (for screen readers) -->
+  <div class="visually-hidden" aria-live="polite" id="aria-notifications"></div>
+
+  <!-- Our main application script, loaded as a module -->
+  <script src="app.js" type="module"></script>
+</body>
+</html>
