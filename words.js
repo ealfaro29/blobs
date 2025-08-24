@@ -53,7 +53,7 @@ export const adjectives = [
   'snizzleflip','flopnob','squanchus','drongoid','snurfzilla',
   'splodgopolis','glomplex','booplo','snizzlewump','frumpus',
   'splurggle','squabblero','norgus','droppix','snarfopolis','flobbix',
-  'snuzzlord'
+  'snuzzlord', 'blitz'
 ];
 
 export const nouns = [
