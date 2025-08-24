@@ -1,6 +1,8 @@
 import {
-  seedFromString, randInt, randFloat, closedCRtoBezier, generatePoints
+  seedFromString, randInt, randFloat, closedCRtoBezier, generatePoints, mulberry32
 } from './utils.js';
+// Importamos las nuevas listas de palabras
+import { adjectives, nouns } from './words.js';
 
 const BlobApp = {
   state: {
@@ -14,7 +16,7 @@ const BlobApp = {
 
   el: {},
   
-  FIXED_RADIUS: 125,
+  FIXED_RADIUS: 150,
   FIXED_FILL: '#6fe1c5',
 
   init() {
@@ -77,16 +79,10 @@ const BlobApp = {
     animateEl.setAttribute('attributeName', 'd');
     animateEl.setAttribute('from', oldPath);
     animateEl.setAttribute('to', newPath);
-    animateEl.setAttribute('dur', '0.5s'); // Duración ajustada
+    animateEl.setAttribute('dur', '0.5s');
     animateEl.setAttribute('fill', 'freeze');
-
-    // --- ¡LA CURVA CORREGIDA Y VÁLIDA! ---
-    // calcMode="spline" nos permite definir una curva de aceleración personalizada.
     animateEl.setAttribute('calcMode', 'spline');
-    // keyTimes debe corresponder a los puntos en la línea de tiempo (inicio y fin).
     animateEl.setAttribute('keyTimes', '0; 1');
-    // keySplines define la curva de Bézier para la aceleración.
-    // Este valor (0.16, 1, 0.3, 1) crea una curva "ease-out-expo" que es muy dinámica y válida en SVG.
     animateEl.setAttribute('keySplines', '0.16 1 0.3 1');
 
     animateEl.addEventListener('endEvent', () => {
@@ -192,7 +188,17 @@ const BlobApp = {
   },
 
   downloadSvg() {
-    const filename = `blob-${this.state.seed}.svg`;
+    // --- LÓGICA DE NOMBRE DE ARCHIVO ACTUALIZADA ---
+    // 1. Usamos el 'seed' para que el nombre sea repetible para la misma forma.
+    const rand = mulberry32(this.state.seed);
+
+    // 2. Elegimos una palabra aleatoria de cada lista.
+    const randomAdjective = adjectives[Math.floor(rand() * adjectives.length)];
+    const randomNoun = nouns[Math.floor(rand() * nouns.length)];
+    
+    // 3. Creamos el nombre de archivo con el nuevo formato.
+    const filename = `${randomAdjective}-${randomNoun}.svg`;
+    
     const blob = new Blob([this.currentSvgText()], { type: 'image/svg+xml' });
     this.triggerDownload(URL.createObjectURL(blob), filename);
   },
@@ -209,4 +215,3 @@ const BlobApp = {
 };
 
 document.addEventListener('DOMContentLoaded', () => BlobApp.init());
-
