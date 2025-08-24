@@ -1,53 +1,123 @@
-:root{
-  --bg:#0f1115; --panel:#151922; --ink:#e6e8ef; --muted:#9aa3b2; --accent:#77e0ff;
-  --ring: color-mix(in oklab, var(--accent) 50%, transparent);
+/* --- Variables de Color --- */
+:root {
+  --ring-color: #77e0ff;
+  --slider-thumb-bg: #fff;
+  --slider-thumb-border: #1e63ff;
+  --slider-track-bg: #1e63ff;
 }
+
+/* TEMA OSCURO (Por defecto) */
+html,
+html[data-theme="dark"] {
+  --bg: #0f1115;
+  --panel: #151922;
+  --ink: #e6e8ef;
+  --muted: #9aa3b2;
+  --accent: #77e0ff;
+  --border-color: #202633;
+  --input-bg: #0f141e;
+  --panel-shadow: 0 10px 30px rgba(0,0,0,.3);
+}
+
+/* TEMA CLARO */
+html[data-theme="light"] {
+  --bg: #f3f4f6;
+  --panel: #ffffff;
+  --ink: #111827;
+  --muted: #6b7280;
+  --accent: #2563eb;
+  --border-color: #e5e7eb;
+  --input-bg: #f9fafb;
+  --panel-shadow: 0 10px 30px rgba(0,0,0,.08);
+}
+
+/* --- Estilos Base --- */
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
-  margin:0; background:radial-gradient(1200px 800px at 75% -10%, #1a2130 10%, #0f1115 60%),
-            conic-gradient(from 200deg at 120% -10%, #0f1115, #0f1115 30%, #161a23 80%, #0f1115 100%);
-  color:var(--ink); font:14px/1.4 Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji","Segoe UI Emoji";
-  display:grid; grid-template-columns: 320px 1fr; gap:18px; padding:18px;
+  margin:0;
+  color: var(--ink);
+  font: 14px/1.4 Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji","Segoe UI Emoji";
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 18px;
+  padding: 18px;
+  background-color: var(--bg);
+  transition: background-color 0.3s ease;
 }
-header{grid-column: 1 / -1; display:flex; align-items:center; gap:12px}
-header h1{font:600 16px/1.2 Inter, ui-sans-serif; margin:0}
-header .sub{color:var(--muted)}
-.panel{
+
+/* Fondos condicionales */
+html[data-theme="dark"] body {
+  background-image: radial-gradient(1200px 800px at 75% -10%, #1a2130 10%, #0f1115 60%),
+                    conic-gradient(from 200deg at 120% -10%, #0f1115, #0f1115 30%, #161a23 80%, #0f1115 100%);
+}
+
+header {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+header h1 { font: 600 16px/1.2 Inter, ui-sans-serif; margin: 0; }
+header .sub { color: var(--muted); }
+
+/* --- Selector de Tema --- */
+.theme-switcher { margin-left: auto; }
+.theme-switcher select { padding: 6px 8px; }
+
+.panel {
   background: color-mix(in oklab, var(--panel) 85%, #000 15%);
-  border:1px solid #202633; border-radius:14px; padding:14px; box-shadow:0 10px 30px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.03);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: var(--panel-shadow), inset 0 1px 0 color-mix(in oklab, #fff 3%, transparent);
 }
+
+/* ... (resto de los estilos sin cambios, adaptados para usar las nuevas variables) ... */
 .controls{display:grid; gap:12px; align-content:start; position:sticky; top:18px; max-height:calc(100dvh - 36px); overflow:auto}
 .control{display:grid; gap:6px}
 .control .row{display:flex; gap:10px; align-items:center; justify-content:space-between}
 label{font-weight:600}
-input, select, button{ background:#0f141e; color:var(--ink); border:1px solid #253046; padding:8px 10px; border-radius:10px; }
-input[type="number"].num-input{width: 70px; text-align: right; font-variant-numeric: tabular-nums;}
-.btn{cursor:pointer; font-weight:600; text-align: center;}
-.btn:focus-visible, input:focus-visible, select:focus-visible{ outline:2px solid var(--ring); outline-offset:2px; }
-.grid{
-  background:
-    linear-gradient(#202633 1px, transparent 1px) 0 0/40px 40px,
-    linear-gradient(90deg,#202633 1px, transparent 1px) 0 0/40px 40px,
-    radial-gradient(800px 600px at 70% -10%, #171c26, transparent 60%);
-  border-radius:14px; border:1px solid #202633; overflow:hidden; height:calc(100dvh - 36px);
+input, select, button {
+  background: var(--input-bg);
+  color: var(--ink);
+  border: 1px solid color-mix(in oklab, var(--border-color) 70%, var(--bg));
+  padding: 8px 10px;
+  border-radius: 10px;
 }
+.btn{cursor:pointer; font-weight:600; text-align: center;}
+.btn:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--accent) 50%, transparent);
+  outline-offset: 2px;
+}
+.grid {
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  overflow: hidden;
+  height: calc(100dvh - 36px);
+}
+/* Líneas de la cuadrícula condicionales */
+html[data-theme="dark"] .grid {
+  background-image: linear-gradient(#202633 1px, transparent 1px) 0 0/40px 40px,
+                    linear-gradient(90deg, #202633 1px, transparent 1px) 0 0/40px 40px,
+                    radial-gradient(800px 600px at 70% -10%, #171c26, transparent 60%);
+}
+html[data-theme="light"] .grid {
+  background-image: linear-gradient(#e5e7eb 1px, transparent 1px) 0 0/40px 40px,
+                    linear-gradient(90deg, #e5e7eb 1px, transparent 1px) 0 0/40px 40px;
+}
+
 .stage{height:100%; display:grid; place-items:center}
 svg{width:min(100%, 900px); height:auto; display:block}
-
-/* ESTILO FIJO DEL BLOB */
-#blob {
-  fill: #6fe1c5;
-  /* stroke y stroke-width eliminados */
-}
+#blob { fill: #ae12d4; }
 
 .actions{display:flex; gap:8px; flex-wrap:wrap}
 .split{display:grid; grid-template-columns:1fr 1fr; gap:10px}
 .note{font-size:12px; color:var(--muted)}
 
 input[type="range"]{ -webkit-appearance:none; appearance:none; width:100%; margin:0; background:transparent; padding:0; border:none; border-radius:0; box-shadow:none; cursor:pointer; }
-input[type="range"]::-webkit-slider-runnable-track{ height:6px; background:#1e63ff; border-radius:3px; }
-input[type="range"]::-webkit-slider-thumb{ -webkit-appearance:none; appearance:none; height:16px; width:16px; background:#fff; border-radius:50%; border:2px solid #1e63ff; margin-top:-5px; cursor:pointer; }
+input[type="range"]::-webkit-slider-runnable-track{ height:6px; background: var(--slider-track-bg); border-radius:3px; }
+input[type="range"]::-webkit-slider-thumb{ -webkit-appearance:none; appearance:none; height:16px; width:16px; background: var(--slider-thumb-bg); border-radius:50%; border:2px solid var(--slider-thumb-border); margin-top:-5px; cursor:pointer; }
 
 #basicControls, #advancedControls{ display:grid; gap:12px; }
 .hidden{ display: none !important; }
@@ -55,8 +125,8 @@ input[type="range"]::-webkit-slider-thumb{ -webkit-appearance:none; appearance:n
 
 .toast {
   position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-  background-color: var(--accent); color: var(--bg); padding: 12px 24px;
-  border-radius: 8px; font-weight: 600; box-shadow: 0 5px 15px rgba(0,0,0,.3);
+  background-color: var(--accent); color: var(--panel); padding: 12px 24px;
+  border-radius: 8px; font-weight: 600; box-shadow: var(--panel-shadow);
   opacity: 0; visibility: hidden; z-index: 1000;
   transition: opacity 0.3s ease, visibility 0.3s ease, bottom 0.3s ease;
 }
