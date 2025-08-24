@@ -14,7 +14,7 @@ const BlobApp = {
 
   el: {},
   
-  FIXED_RADIUS: 150,
+  FIXED_RADIUS: 125,
   FIXED_FILL: '#6fe1c5',
 
   init() {
@@ -209,3 +209,4 @@ const BlobApp = {
 };
 
 document.addEventListener('DOMContentLoaded', () => BlobApp.init());
+
