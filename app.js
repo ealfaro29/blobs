@@ -1,7 +1,6 @@
 import {
-  seedFromString, randInt, randFloat, closedCRtoBezier, generatePoints, mulberry32
+  seedFromString, randInt, randFloat, closedCRtoBezier, generatePoints, mulberry32 // <-- AÑADIDO mulberry32 AQUÍ
 } from './utils.js';
-// Importamos las nuevas listas de palabras
 import { adjectives, nouns } from './words.js';
 
 const BlobApp = {
@@ -16,11 +15,12 @@ const BlobApp = {
 
   el: {},
   
-  FIXED_RADIUS: 150,
-  FIXED_FILL: '#6fe1c5',
+  FIXED_RADIUS: 120,
+  FIXED_FILL: '#8c19d8ff',
 
   init() {
     this.cacheDOMElements();
+    this.initTheme();
     this.loadStateFromURL();
     this.syncUIToState();
     this.bindEvents();
@@ -33,7 +33,8 @@ const BlobApp = {
       'mode', 'basicControls', 'advancedControls', 'basicGenerate', 'randomize',
       'points', 'points_num', 'variance', 'variance_num', 'smooth', 'smooth_num',
       'jitter', 'jitter_num',
-      'svg', 'blob', 'toast', 'aria-notifications'
+      'svg', 'blob', 'toast', 'aria-notifications',
+      'theme',
     ];
     ids.forEach(id => this.el[id] = document.getElementById(id));
     
@@ -58,10 +59,37 @@ const BlobApp = {
     this.el.mode.addEventListener('change', e => this.setMode(e.target.value));
     this.el.randomize.addEventListener('click', () => this.randomizeSeed());
     this.el.basicGenerate.addEventListener('click', () => this.generateRandomBasic());
+    this.el.theme.addEventListener('change', e => this.handleThemeChange(e.target.value));
 
     this.el.copyPathBtns.forEach(btn => btn.addEventListener('click', () => this.copyData(this.el.blob.getAttribute('d'), "Path copied!")));
     this.el.copySvgBtns.forEach(btn => btn.addEventListener('click', () => this.copyData(this.currentSvgText(), "SVG code copied!")));
     this.el.downloadSvgBtns.forEach(btn => btn.addEventListener('click', () => this.downloadSvg()));
+  },
+
+  initTheme() {
+    const savedTheme = localStorage.getItem('blob-theme') || 'system';
+    this.el.theme.value = savedTheme;
+    this.applyTheme(savedTheme);
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+        if (localStorage.getItem('blob-theme') === 'system') {
+            this.applyTheme('system');
+        }
+    });
+  },
+
+  applyTheme(theme) {
+    if (theme === 'system') {
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.dataset.theme = systemPrefersDark ? 'dark' : 'light';
+    } else {
+        document.documentElement.dataset.theme = theme;
+    }
+  },
+
+  handleThemeChange(theme) {
+    localStorage.setItem('blob-theme', theme);
+    this.applyTheme(theme);
   },
 
   render() {
@@ -188,17 +216,10 @@ const BlobApp = {
   },
 
   downloadSvg() {
-    // --- LÓGICA DE NOMBRE DE ARCHIVO ACTUALIZADA ---
-    // 1. Usamos el 'seed' para que el nombre sea repetible para la misma forma.
     const rand = mulberry32(this.state.seed);
-
-    // 2. Elegimos una palabra aleatoria de cada lista.
     const randomAdjective = adjectives[Math.floor(rand() * adjectives.length)];
     const randomNoun = nouns[Math.floor(rand() * nouns.length)];
-    
-    // 3. Creamos el nombre de archivo con el nuevo formato.
     const filename = `${randomAdjective}-${randomNoun}.svg`;
-    
     const blob = new Blob([this.currentSvgText()], { type: 'image/svg+xml' });
     this.triggerDownload(URL.createObjectURL(blob), filename);
   },
