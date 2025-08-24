@@ -14,7 +14,7 @@ const BlobApp = {
 
   el: {},
   
-  FIXED_RADIUS: 120,
+  FIXED_RADIUS: 150,
   FIXED_FILL: '#6fe1c5',
 
   init() {
@@ -63,10 +63,41 @@ const BlobApp = {
   },
 
   render() {
+    const oldPath = this.el.blob.getAttribute('d');
     const generationParams = { ...this.state, radius: this.FIXED_RADIUS };
     const points = generatePoints(generationParams);
-    const d = closedCRtoBezier(points, this.state.smooth);
-    this.el.blob.setAttribute('d', d);
+    const newPath = closedCRtoBezier(points, this.state.smooth);
+
+    if (!oldPath || oldPath === newPath) {
+      this.el.blob.setAttribute('d', newPath);
+      return;
+    }
+    
+    const animateEl = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+    animateEl.setAttribute('attributeName', 'd');
+    animateEl.setAttribute('from', oldPath);
+    animateEl.setAttribute('to', newPath);
+    animateEl.setAttribute('dur', '0.5s'); // Duración ajustada
+    animateEl.setAttribute('fill', 'freeze');
+
+    // --- ¡LA CURVA CORREGIDA Y VÁLIDA! ---
+    // calcMode="spline" nos permite definir una curva de aceleración personalizada.
+    animateEl.setAttribute('calcMode', 'spline');
+    // keyTimes debe corresponder a los puntos en la línea de tiempo (inicio y fin).
+    animateEl.setAttribute('keyTimes', '0; 1');
+    // keySplines define la curva de Bézier para la aceleración.
+    // Este valor (0.16, 1, 0.3, 1) crea una curva "ease-out-expo" que es muy dinámica y válida en SVG.
+    animateEl.setAttribute('keySplines', '0.16 1 0.3 1');
+
+    animateEl.addEventListener('endEvent', () => {
+      this.el.blob.setAttribute('d', newPath);
+      this.el.blob.innerHTML = '';
+    });
+
+    this.el.blob.innerHTML = '';
+    this.el.blob.appendChild(animateEl);
+
+    animateEl.beginElement();
   },
   
   loadStateFromURL() {
